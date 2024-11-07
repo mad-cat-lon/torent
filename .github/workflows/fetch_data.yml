@@ -23,8 +23,8 @@ jobs:
 
       - name: Download and Unzip Investigation Activities ZIP
         run: |
-          curl -L -o "data/bylaw/Investigation_Activities.zip" "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/5da2e2e8-659e-4850-ae43-47b7f7ad6b62/resource/5633cb87-19fc-4735-82af-80ad8b48657e/download/Investigation%20Activities%20(CSV%20ZIP).zip"
-          unzip -o "Investigation_Activities.zip" -d "."
+          curl -L -o "Investigation_Activities.zip" "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/5da2e2e8-659e-4850-ae43-47b7f7ad6b62/resource/5633cb87-19fc-4735-82af-80ad8b48657e/download/Investigation%20Activities%20(CSV%20ZIP).zip"
+          unzip -o "Investigation_Activities.zip" -d "data/bylaw"
 
       - name: Commit and Push Changes
         run: |
