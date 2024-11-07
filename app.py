@@ -12,7 +12,7 @@ ADDRESS_FILES = {
     "bylaw_addrs": "data/bylaw/Addresses.csv",
     "bylaw_defs": "data/bylaw/Deficiencies.csv",
     "bylaw_investigations": "data/bylaw/Investigations.csv",
-    "fire_inspections": "data/fire/Highrise Inspections Data.csv",
+    "fire_inspections": "data/fire/Highrise_Inspections_Data.csv",
     "fire_incidents": "data/fire/Fire Incidents Data.csv"
 }
 
@@ -132,13 +132,14 @@ if address:
                         st.write("No deficiencies found.")
 
         with fire_col:
-            st.subheader("Fire Code Inspections")
+            st.subheader("Fire Code Violations")
             if fire_results["found"]:
                 with st.expander("Inspection Summary"):
                     inspections = fire_results["inspections"]
                     st.dataframe(inspections[[INSPECTION_OPEN_DATE_COLUMN, "VIOLATION_DESCRIPTION"]])
 
                     # Timeline charts
+                    st.subheader("Violations")
                     view_selection = st.selectbox("Select View", ["Yearly", "Monthly"], key="fire_view")
                     st.altair_chart(generate_timeline_chart(inspections, INSPECTION_OPEN_DATE_COLUMN, view_selection), use_container_width=True)
             else:

@@ -1,0 +1,39 @@
+name: Fetch data files
+on:
+  schedule:
+    - cron: "0 0 * * *" 
+  workflow_dispatch:  
+
+jobs:
+  update_data_files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Download Highrise Inspections Data CSV
+        run: |
+          curl -L -o "../../data/fire/Highrise_Inspections_Data.csv" "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/f816b362-778a-4480-b9ed-9b240e0fe9c2/resource/98fddf20-5c46-49fc-a1b4-eadd1877acec/download/Highrise%20Inspections%20Data.csv"
+
+      - name: Download and Unzip Investigation Activities ZIP
+        run: |
+          curl -L -o "../../data/bylaw/Investigation_Activities.zip" "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/5da2e2e8-659e-4850-ae43-47b7f7ad6b62/resource/5633cb87-19fc-4735-82af-80ad8b48657e/download/Investigation%20Activities%20(CSV%20ZIP).zip"
+          unzip -o "Investigation_Activities.zip" -d "."
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update data files: $(date '+%Y-%m-%d')"
+            git push
+          fi
