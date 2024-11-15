@@ -13,13 +13,12 @@ ADDRESS_FILES = {
     "bylaw_defs": "data/bylaw/Deficiencies.csv",
     "bylaw_investigations": "data/bylaw/Investigations.csv",
     "fire_inspections": "data/fire/Highrise_Inspections_Data.csv",
-    "fire_incidents": "data/fire/Fire Incidents Data.csv"
 }
 
 # Streamlit UI Configuration
 st.set_page_config(layout="wide")
 st.sidebar.title("Toronto Highrise Safety Check")
-address = st.sidebar.text_input("Enter Address", "").strip()
+address = st.sidebar.text_input("Enter Address", "", placeholder="123 Main Street").strip()
 
 # Load CSV files
 @st.cache_data
@@ -144,3 +143,9 @@ if address:
                     st.altair_chart(generate_timeline_chart(inspections, INSPECTION_OPEN_DATE_COLUMN, view_selection), use_container_width=True)
             else:
                 st.write("No fire code inspections found for this address.")
+else:
+    st.title("Welcome to Toronto Highrise Safety Check")
+    st.write("""
+        This app helps you explore bylaw investigations and fire code violations
+        for highrise buildings in Toronto using data from the City of Toronto's Open Data Portal. Enter an address in the sidebar to get started!
+    """)
