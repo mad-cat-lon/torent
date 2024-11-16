@@ -2,6 +2,41 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from fuzzywuzzy import fuzz, process
+import pathlib
+import logging
+import shutil
+from bs4 import BeautifulSoup
+
+
+def inject_ga():
+    GA_ID = "google_analytics"
+    GA_JS = """
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-C0ZY2LG7MM"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-C0ZY2LG7MM');
+        </script>
+    """
+
+    index_path = pathlib.Path(st.__file__).parent / "static" / "index.html"
+    logging.info(f'editing {index_path}')
+    soup = BeautifulSoup(index_path.read_text(), features="html.parser")
+    if not soup.find(id=GA_ID):  # if cannot find tag
+        bck_index = index_path.with_suffix('.bck')
+        if bck_index.exists():
+            shutil.copy(bck_index, index_path)  # recover from backup
+        else:
+            shutil.copy(index_path, bck_index)  # keep a backup
+        html = str(soup)
+        new_html = html.replace('<head>', '<head>\n' + GA_JS)
+        index_path.write_text(new_html)
+
+
+inject_ga()
 
 # Constants
 BYLAW_ADDR_COLUMN = "AddrLine"
@@ -23,6 +58,7 @@ address = st.sidebar.text_input("Enter Address", "", placeholder="123 Main Stree
 # Load CSV files
 @st.cache_data
 def load_data(files):
+
     dataframes = {}
     for key, path in files.items():
         try:
